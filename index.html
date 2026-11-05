@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart AI Hospital Assistant</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&display=swap">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#edf5f4;--panel:#fff;--text:#10302d;--muted:#58757198;--mut:#587571;--line:#d2e3e0;--accent:#0f766e;--ink:#fff;--field:#f5faf9;
+  --bad:#c2413a;--warn:#b7791f;--blue:#2b6cb0;--floor:#f3f8f7;--wall:#10302d;--exp:rgba(43,108,176,.28)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0a1a19;--panel:#102624;--text:#e0f0ee;--mut:#8fb0ab;--line:#244541;--accent:#34c2b3;--ink:#062321;--field:#0c1f1d;
+  --bad:#f0706a;--warn:#e8b04a;--blue:#69a8ee;--floor:#0d201e;--wall:#c9e0dc;--exp:rgba(105,168,238,.3)}}
+:root[data-theme="dark"]{--bg:#0a1a19;--panel:#102624;--text:#e0f0ee;--mut:#8fb0ab;--line:#244541;--accent:#34c2b3;--ink:#062321;--field:#0c1f1d;
+  --bad:#f0706a;--warn:#e8b04a;--blue:#69a8ee;--floor:#0d201e;--wall:#c9e0dc;--exp:rgba(105,168,238,.3)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.shell{display:grid;grid-template-columns:minmax(0,1fr)}
+.content{min-width:0}
+.topbar{padding:12px 16px 0}
+.side{position:fixed;top:0;bottom:0;left:0;width:min(280px,85vw);background:var(--panel);border-right:1.5px solid var(--line);padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-105%);transition:transform .2s;z-index:30;overflow-y:auto}
+.side.open{transform:none}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20}
+.scrim[hidden]{display:none}
+.brand{font:800 21px/1.15 "Bricolage Grotesque",system-ui,sans-serif;margin:4px 8px 4px;letter-spacing:-.02em}
+.brand small{display:block;font:400 12px/1.4 system-ui;color:var(--mut);letter-spacing:0;margin-top:4px}
+.side nav{display:grid;gap:6px;margin-top:14px}
+.side nav button{text-align:left;padding:12px 14px;border-radius:12px;border:0;background:transparent;color:var(--text);font:inherit;font-weight:700;cursor:pointer;min-height:46px}
+.side nav button:hover:not(.on){background:var(--field)}
+.side nav button.on{background:var(--accent);color:var(--ink)}
+@media(min-width:900px){.shell{grid-template-columns:260px minmax(0,1fr)}.side{position:sticky;top:0;height:100dvh;width:auto;transform:none;z-index:1}.topbar{display:none}.scrim{display:none!important}}
+header,main{max-width:1200px;margin:0 auto;padding-left:16px;padding-right:16px}
+header{padding-top:8px}
+@media(min-width:900px){header{padding-top:22px}}
+h1{font:800 clamp(24px,4.5vw,36px)/1.05 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 4px;letter-spacing:-.02em}
+header p{margin:0;color:var(--mut);max-width:72ch}
+main{padding-top:16px;padding-bottom:30px}
+.view[hidden]{display:none}
+.card{background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:18px;min-width:0}
+.stack{display:grid;gap:16px}
+.narrow{max-width:760px;margin:0 auto}
+.cols{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+h2{font:700 18px/1.2 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 10px}
+label{display:block;font-weight:600;font-size:13px;margin:12px 0 4px}
+textarea,select{width:100%;padding:10px;border-radius:9px;border:1.5px solid var(--line);background:var(--field);color:var(--text);font:inherit}
+textarea{min-height:70px;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--accent);min-height:28px}
+.btn{padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);background:var(--panel);color:var(--text);font:inherit;font-weight:700;cursor:pointer;min-height:44px}
+.btn.main{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.btn.sm{min-height:38px;padding:6px 12px;font-size:14px}
+.btn:focus-visible,select:focus-visible,textarea:focus-visible,.chips button:focus-visible,.side nav button:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hint{color:var(--mut);font-size:13px;margin:6px 0 0}
+.err{color:var(--bad);font-weight:700;margin:10px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--field);color:var(--text);font:inherit;font-weight:600;cursor:pointer;min-height:40px}
+.chips button.on{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.badge{display:inline-block;padding:2px 12px;border-radius:999px;font-weight:700;font-size:13px}
+.badge.urg{background:var(--bad);color:#fff}.badge.nor{background:var(--accent);color:var(--ink)}
+.big{font:800 clamp(26px,5vw,38px)/1.1 "Bricolage Grotesque",system-ui,sans-serif;margin:4px 0}
+.flow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;font-size:13px}
+.flow span{border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;background:var(--field)}
+.tr{font-size:14px}
+.tr div{padding:2px 0;overflow-wrap:anywhere}
+.tr .y{color:var(--accent);font-weight:600}.tr .n{color:var(--bad)}.tr .r{font-weight:700}
+.bar{display:grid;grid-template-columns:minmax(110px,34%) minmax(0,1fr);gap:8px;align-items:center;margin:7px 0;font-size:13px}
+.track{height:20px;background:var(--line);border-radius:6px;overflow:hidden}
+.fill{height:100%;background:var(--accent);color:var(--ink);font-weight:700;font-size:12px;display:flex;align-items:center;padding:0 8px;white-space:nowrap;min-width:fit-content}
+.fill.b{background:var(--blue);color:#fff}.fill.w{background:var(--warn);color:#fff}
+canvas{display:block;max-width:100%;border:1.5px solid var(--line);border-radius:8px}
+ol.plan{margin:0;padding-left:22px}ol.plan li{margin:5px 0}
+.ir{border-top:1.5px solid var(--line);padding:10px 0}.ir:first-of-type{border-top:0}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1.5px solid var(--line)}th{color:var(--mut);font-weight:600}
+td.hl,tr.hl td{background:color-mix(in srgb,var(--accent) 18%,var(--panel));font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.tiles div{border-left:5px solid var(--accent);padding-left:12px}
+.tiles b{display:block;font:800 28px/1.1 "Bricolage Grotesque",system-ui,sans-serif}
+.tiles span{font-size:13px;color:var(--mut)}
+.item{display:grid;gap:6px;padding:14px 0;border-top:1.5px solid var(--line)}.item:first-child{border-top:0;padding-top:0}
+.tw{overflow-x:auto}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="side" id="side">
+  <div class="brand">Smart AI Hospital Assistant<small>Educational prototype. Not a real diagnostic or treatment system.</small></div>
+  <nav aria-label="Pages">
+    <button data-p="dashboard">Dashboard</button>
+    <button data-p="assess">New Assessment</button>
+    <button data-p="results">Results</button>
+    <button data-p="planner">Resource Planner</button>
+    <button data-p="history">History</button>
+  </nav>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+<div class="content">
+<div class="topbar"><button class="btn sm" id="menu" aria-label="Open menu" aria-expanded="false">&#9776; Menu</button></div>
+<header><h1 id="ttl"></h1><p id="sub"></p></header>
+<main>
+<section class="view" id="v-dashboard"><div class="stack" id="dash"></div></section>
+<section class="view" id="v-assess" hidden>
+  <div class="card narrow">
+    <h2>What symptoms do you have?</h2>
+    <div class="chips" id="chips"></div>
+    <label for="q">Ask a health or hospital question (optional)</label>
+    <textarea id="q" maxlength="200" placeholder="For example: where is the pharmacy, or what should I do for a fever?"></textarea>
+    <p class="err" id="err" role="alert"></p>
+    <div class="btns"><button class="btn main" id="go">Analyze</button><button class="btn" id="clr">Clear</button></div>
+    <p class="hint">Educational prototype using sample data. It is not medical advice. In an emergency, call your local emergency number.</p>
+  </div>
+</section>
+<section class="view" id="v-results" hidden><div class="stack" id="res"></div></section>
+<section class="view" id="v-planner" hidden><div class="stack" id="plan"></div></section>
+<section class="view" id="v-history" hidden>
+  <div class="card narrow"><h2>History</h2><div id="hist"></div><div class="btns" id="hbtn"><button class="btn" id="clrAll">Clear all history</button></div></div>
+</section>
+</main>
+</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pc = x => (x * 100).toFixed(1).replace(/\.0$/, "") + "%";
+
+/* ===== knowledge ===== */
+const SYM = [["fv","Fever"],["co","Cough"],["ha","Headache"],["ba","Body ache"],["fa","Fatigue"],["br","Breathlessness"],["cp","Chest pain"],["na","Nausea"],["vo","Vomiting"],["ab","Abdominal pain"],["rn","Runny nose"],["sn","Sneezing"],["ls","Loss of smell"],["lt","Light sensitivity"],["sk","Stiff neck"]];
+const DER = {ri:"respiratory infection", fl:"flu-like illness", li:"lung involvement"};
+const DEPT = {E:"Entrance",L:"Laboratory",N:"Neurology",C:"Cardiology",M:"Emergency",P:"Pharmacy",X:"Radiology",G:"General Medicine"};
+const COND = {
+  flu:{n:"Influenza (flu)",d:"G",u:0,g:["prescribed"]}, cold:{n:"Common cold",d:"G",u:0,g:["prescribed"]},
+  covid:{n:"COVID-like illness",d:"L",u:0,g:["tested","prescribed"]}, gastro:{n:"Gastroenteritis",d:"G",u:0,g:["tested","prescribed"]},
+  migraine:{n:"Migraine",d:"N",u:0,g:["specialist","prescribed"]}, pneu:{n:"Pneumonia risk",d:"X",u:0,g:["imaged","tested","prescribed"]},
+  cardiac:{n:"Cardiac alert",d:"M",u:1,g:["stabilised","imaged","admitted"]}, mening:{n:"Meningitis alert",d:"M",u:1,g:["stabilised","tested","admitted"]},
+  other:{n:"Other or unclear",d:"G",u:0,g:["prescribed"]}};
+const RULES = [["R1",["fv","co"],"ri"],["R2",["fv","ba","fa"],"fl"],["R3",["ri","br"],"li"],["R4",["li","fa"],"pneu"],["R5",["fl","ri"],"flu"],
+  ["R6",["sn","rn"],"cold"],["R7",["ri","ls"],"covid"],["R8",["na","vo","ab"],"gastro"],["R9",["ha","lt","na"],"migraine"],["R10",["cp","br"],"cardiac"],["R11",["fv","ha","sk"],"mening"]];
+const PRI = {cold:.30,flu:.15,covid:.08,gastro:.12,migraine:.10,pneu:.03,cardiac:.02,mening:.005,other:.195};
+const LIK = {
+  cold:[.2,.5,.3,.3,.3,.05,.01,.05,.01,.01,.8,.7,.05,.05,.01], flu:[.9,.7,.6,.8,.8,.1,.02,.2,.1,.05,.3,.2,.05,.1,.02],
+  covid:[.7,.7,.4,.6,.7,.2,.05,.2,.1,.05,.3,.2,.6,.1,.02], gastro:[.3,.02,.2,.3,.4,.02,.02,.8,.7,.8,.02,.01,.01,.05,.01],
+  migraine:[.02,.01,.95,.1,.2,.01,.01,.6,.2,.02,.01,.01,.01,.8,.05], pneu:[.85,.9,.4,.5,.7,.7,.3,.1,.05,.05,.1,.05,.02,.02,.02],
+  cardiac:[.05,.1,.2,.1,.4,.7,.9,.3,.1,.05,.01,.01,.01,.02,.01], mening:[.9,.05,.9,.4,.4,.02,.01,.5,.4,.02,.01,.01,.01,.7,.9],
+  other:[.05,.05,.1,.05,.1,.03,.03,.05,.03,.05,.05,.05,.02,.03,.01]};
+const ACTS = [
+  {n:"register",p:["at"],a:["registered"],t:"Register at the reception desk"},
+  {n:"triage",p:["registered"],a:["triaged"],t:"Triage nurse checks vital signs"},
+  {n:"emergency",p:["triaged","urgent"],a:["stabilised","doctor"],t:"Emergency team stabilises the patient"},
+  {n:"consult",p:["triaged"],a:["doctor"],t:"Consult the doctor"},
+  {n:"lab",p:["doctor"],a:["tested"],t:"Give samples for laboratory tests"},
+  {n:"imaging",p:["doctor"],a:["imaged"],t:"Have a scan in radiology"},
+  {n:"specialist",p:["doctor"],a:["specialist"],t:"See the specialist doctor"},
+  {n:"prescribe",p:["doctor"],a:["prescribed"],t:"Collect the prescription and medicines at the pharmacy"},
+  {n:"admit",p:["stabilised"],a:["admitted"],t:"Admit to the ward for observation"}];
+const DOCS = [
+ "Emergency department is open 24 hours. Chest pain, severe headache with stiff neck, or trouble breathing need immediate emergency care.",
+ "Flu and common cold: rest, drink fluids, and take fever medicine as advised by a doctor. See a doctor if fever or cough lasts more than five days.",
+ "The pharmacy is on the ground floor near radiology and is open from 8 am to 10 pm. Bring your prescription.",
+ "Visiting hours are 4 pm to 6 pm for general wards. Emergency visitors are allowed one at a time.",
+ "Laboratory tests such as blood tests may need fasting for eight hours when the doctor asks. Reports are ready in one day.",
+ "Migraine: a throbbing headache with nausea and sensitivity to light. Rest in a dark quiet room and see neurology if attacks are frequent.",
+ "Gastroenteritis: vomiting, stomach pain and loose motions. Drink oral rehydration solution and avoid oily food. See a doctor if there is blood or high fever.",
+ "Pneumonia: fever, cough and breathlessness. A chest scan in radiology and antibiotics prescribed by a doctor are common steps.",
+ "The cardiology clinic runs on weekdays. Chest pain with breathlessness should be checked urgently at the emergency department.",
+ "COVID-like illness: fever, cough and loss of smell. Wear a mask, isolate at home and get tested at the laboratory.",
+ "Meningitis warning signs: fever, severe headache and stiff neck. This is an emergency.",
+ "Registration: bring a photo ID. New patients register at the reception desk and then visit the triage desk."];
+const MAP = ["#####################","#E.#L..#N..#C..#M..##","#..#...#...#...#...##","#..##.###.###.###.###","#...................#",
+  "#####.###.###.###.###","####...#...#...#...##","####P..#X..#G..#...##","#####################"];
+const MW = 21, MH = 9;
+
+/* ===== reasoning ===== */
+const lab = f => (SYM.find(s => s[0] === f) || [])[1] ? SYM.find(s => s[0] === f)[1].toLowerCase() : (DER[f] || (COND[f] && COND[f].n) || f);
+function forward(S) {
+  const facts = new Set(S), fired = []; let ch = true;
+  while (ch) { ch = false;
+    for (const r of RULES) if (!facts.has(r[2]) && r[1].every(p => facts.has(p))) { facts.add(r[2]); fired.push(r); ch = true; } }
+  return {facts, fired};
+}
+function backward(goal, S) {
+  const lines = [], given = new Set(S);
+  (function prove(g, d) {
+    if (given.has(g)) { lines.push([d, "\u2713 " + lab(g) + " is reported", "y"]); return true; }
+    const rs = RULES.filter(r => r[2] === g);
+    if (!rs.length) { lines.push([d, "\u2717 " + lab(g) + " is not reported", "n"]); return false; }
+    let any = false;
+    rs.forEach(r => { lines.push([d, "To prove " + lab(g) + ", use " + r[0] + " (needs " + r[1].map(lab).join(" + ") + ")", "r"]);
+      let all = true; r[1].forEach(p => { if (!prove(p, d + 1)) all = false; }); if (all) any = true; });
+    return any;
+  })(goal, 0);
+  return lines;
+}
+function bayes(S) {
+  const set = new Set(S), out = Object.keys(PRI).map(c => {
+    let p = PRI[c]; SYM.forEach((s, i) => { p *= set.has(s[0]) ? LIK[c][i] : 1 - LIK[c][i]; }); return [c, p]; });
+  const z = out.reduce((a, b) => a + b[1], 0) || 1;
+  return out.map(([c, p]) => [c, p / z]).sort((a, b) => b[1] - a[1]);
+}
+const cellOf = ch => { const i = MAP.join("").indexOf(ch); return i; };
+const nbrs = i => [i - 1, i + 1, i - MW, i + MW].filter(j => j >= 0 && j < MW * MH && MAP.join("")[j] !== "#" && !(Math.abs(j - i) === 1 && Math.floor(j / MW) !== Math.floor(i / MW)));
+function search(alg, s, g) {
+  const man = i => Math.abs(i % MW - g % MW) + Math.abs(Math.floor(i / MW) - Math.floor(g / MW));
+  const prev = {}, cost = {[s]: 0}, order = [], done = new Set(); let open = [[man(s), s]];
+  if (alg === "bfs") open = [[0, s]];
+  while (open.length) {
+    let k = 0; if (alg === "astar") open.forEach((o, i) => { if (o[0] < open[k][0]) k = i; });
+    const [, u] = open.splice(k, 1)[0]; if (done.has(u)) continue; done.add(u); order.push(u); if (u === g) break;
+    for (const v of nbrs(u)) if (!(v in cost)) { cost[v] = cost[u] + 1; prev[v] = u; open.push([alg === "astar" ? cost[v] + man(v) : 0, v]); }
+  }
+  const path = []; for (let x = g; x !== undefined; x = prev[x]) path.push(x);
+  return {order, path: path.reverse()};
+}
+function planFor(goal, urgent) {
+  const key = s => [...s].sort().join(), q = [{s: new Set(["at"].concat(urgent ? ["urgent"] : [])), p: []}], seen = new Set([key(q[0].s)]);
+  while (q.length) { const n = q.shift(); if (goal.every(x => n.s.has(x))) return n.p;
+    for (const a of ACTS) if (a.p.every(x => n.s.has(x))) { const s = new Set(n.s); a.a.forEach(x => s.add(x)); const k = key(s); if (!seen.has(k)) { seen.add(k); q.push({s, p: [...n.p, a]}); } } }
+  return [];
+}
+const tk = s => (s.toLowerCase().match(/[a-z0-9]+/g) || []).map(w => w.length > 4 ? w.replace(/(ing|ed|es|s)$/, "") : w);
+function retrieve(query) {
+  const dt = DOCS.map(tk), df = {}; dt.forEach(t => new Set(t).forEach(w => df[w] = (df[w] || 0) + 1));
+  const vec = t => { const m = {}; t.forEach(w => m[w] = (m[w] || 0) + 1); let n = 0; for (const w in m) { m[w] = (1 + Math.log(m[w])) * (Math.log((1 + DOCS.length) / (1 + (df[w] || 0))) + 1); n += m[w] * m[w]; } n = Math.sqrt(n) || 1; for (const w in m) m[w] /= n; return m; };
+  const q = vec(tk(query));
+  return dt.map((t, i) => { const d = vec(t); let s = 0; for (const w in q) if (d[w]) s += q[w] * d[w]; return [i, s]; }).filter(x => x[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 3);
+}
+function analyze(a) {
+  const f = forward(a.sym), post = bayes(a.sym), top = post[0];
+  const alert = f.fired.map(r => r[2]).find(c => COND[c] && COND[c].u), target = alert || top[0];
+  const urgent = !!COND[target].u, dept = COND[target].d;
+  const g = MAP.join("").indexOf(dept), s = MAP.join("").indexOf("E");
+  const bfs = search("bfs", s, g), ast = search("astar", s, g), plan = planFor(COND[target].g, urgent);
+  const q = a.sym.map(x => lab(x)).join(" ") + " " + COND[target].n + " " + (a.q || "");
+  return {f, post, top, target, urgent, dept, bfs, ast, plan, ir: retrieve(q)};
+}
+
+/* ===== state ===== */
+const KEY = "hospital-history-v1", PAGES = ["dashboard", "assess", "results", "planner", "history"];
+const TITLES = {dashboard:["Dashboard","An overview of your assessments and the AI techniques behind them."],assess:["New Assessment","Tell the assistant your symptoms."],
+  results:["Results","What the assistant found, and what it suggests next."],planner:["Resource Planner","Minimax decides how to allocate doctors against the worst case."],history:["History","Past assessments saved in this browser."]};
+let hist = [], sel = null, picked = new Set(), bgoal = null, view = "astar";
+try { hist = JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(hist.slice(-50))); } catch (e) {} };
+const when = t => new Date(t).toLocaleString([], {dateStyle: "medium", timeStyle: "short"});
+
+/* ===== pages ===== */
+function drawChips() { $("chips").innerHTML = SYM.map(([id, n]) => `<button type="button" data-sym="${id}" class="${picked.has(id) ? "on" : ""}" aria-pressed="${picked.has(id)}">${n}</button>`).join(""); }
+$("go").onclick = () => {
+  if (!picked.size) { $("err").textContent = "Select at least one symptom."; return; }
+  $("err").textContent = "";
+  const a = {id: Date.now(), t: Date.now(), sym: [...picked], q: $("q").value.trim()};
+  hist.push(a); save(); sel = a.id; bgoal = null; go("results");
+};
+$("clr").onclick = () => { picked.clear(); $("q").value = ""; $("err").textContent = ""; drawChips(); };
+
+function mapCanvas() {
+  const cv = $("map"); if (!cv) return; const a = hist.find(x => x.id === sel), r = analyze(a), v = view === "bfs" ? r.bfs : r.ast;
+  const cs = Math.max(14, Math.min(34, Math.floor(cv.parentElement.clientWidth / MW))), d = window.devicePixelRatio || 1, ctx = cv.getContext("2d"), cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  cv.width = cs * MW * d; cv.height = cs * MH * d; cv.style.width = cs * MW + "px"; cv.style.height = cs * MH + "px"; ctx.setTransform(d, 0, 0, d, 0, 0);
+  const flat = MAP.join(""), exp = new Set(v.order);
+  for (let i = 0; i < MW * MH; i++) { const x = i % MW * cs, y = Math.floor(i / MW) * cs, ch = flat[i];
+    ctx.fillStyle = ch === "#" ? cssv("--wall") : cssv("--floor"); ctx.fillRect(x, y, cs, cs);
+    if (exp.has(i)) { ctx.fillStyle = cssv("--exp"); ctx.fillRect(x, y, cs, cs); }
+    if (DEPT[ch]) { ctx.fillStyle = i === flat.indexOf(r.dept) ? cssv("--bad") : cssv("--accent"); ctx.fillRect(x + 1, y + 1, cs - 2, cs - 2); ctx.fillStyle = "#fff"; ctx.font = "bold " + Math.floor(cs * .55) + "px system-ui"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(ch, x + cs / 2, y + cs / 2 + 1); } }
+  ctx.strokeStyle = cssv("--warn"); ctx.lineWidth = Math.max(3, cs * .22); ctx.lineJoin = "round"; ctx.beginPath();
+  v.path.forEach((i, k) => { const x = i % MW * cs + cs / 2, y = Math.floor(i / MW) * cs + cs / 2; k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.stroke();
+}
+function renderResults() {
+  const a = hist.find(x => x.id === sel);
+  if (!a) { $("res").innerHTML = `<div class="card narrow"><h2>No results yet</h2><p>Run a new assessment first.</p><div class="btns"><button class="btn main" data-go="assess">New Assessment</button></div></div>`; return; }
+  const r = analyze(a), T = COND[r.target], goalOpts = Object.keys(COND).filter(c => c !== "other"); bgoal = bgoal || r.target;
+  const chained = r.f.fired.filter(x => COND[x[2]]).map(x => COND[x[2]].n);
+  $("res").innerHTML = `
+  <div class="card"><span class="badge ${r.urgent ? "urg" : "nor"}">${r.urgent ? "Urgent: go to Emergency" : "Routine visit"}</span>
+    <div class="big">${esc(T.n)}</div>
+    <p style="margin:0">Most likely by probability: <b>${esc(COND[r.top[0]].n)} (${pc(r.top[1])})</b>. Rules concluded: <b>${chained.length ? esc(chained.join(", ")) : "no condition rule matched"}</b>. Go to: <b>${DEPT[r.dept]}</b>.</p>
+    <div class="flow"><span><b>Percept:</b> ${a.sym.map(x => esc(lab(x))).join(", ")}</span><span><b>Reason:</b> chaining + Bayes</span><span><b>Act:</b> route, ${r.plan.length}-step plan, information</span></div>
+    <p class="hint">This intelligent agent senses symptoms, reasons, and acts. Educational prototype only: suggested steps are for clinical review.</p></div>
+  <div class="cols">
+    <div class="card"><h2>Forward chaining</h2><div class="tr">${r.f.fired.length ? r.f.fired.map(x => `<div><b>${x[0]}</b>: ${x[1].map(lab).join(" + ")} \u2192 <b>${esc(lab(x[2]))}</b></div>`).join("") : "<div>No rule could fire with these symptoms.</div>"}</div>
+      <h2 style="margin-top:16px">Backward chaining</h2>
+      <label for="bg">Goal to prove</label><select id="bg">${goalOpts.map(c => `<option value="${c}" ${c === bgoal ? "selected" : ""}>${COND[c].n}</option>`).join("")}</select>
+      <div class="tr" id="bgBox" style="margin-top:8px">${backward(bgoal, a.sym).map(l => `<div class="${l[2]}" style="padding-left:${l[0] * 16}px">${esc(l[1])}</div>`).join("")}</div></div>
+    <div class="card"><h2>Bayes' rule: probabilities</h2>
+      ${r.post.map(([c, p]) => `<div class="bar"><span>${esc(COND[c].n)}</span><div class="track"><div class="fill" style="width:${Math.max(p * 100, 1)}%">${pc(p)}</div></div></div>`).join("")}
+      <p class="hint">Naive Bayes on sample numbers: P(condition | symptoms) is proportional to P(condition) times each P(symptom | condition).</p></div>
+  </div>
+  <div class="cols">
+    <div class="card"><h2>Route to ${DEPT[r.dept]}</h2>
+      <div class="btns" style="margin:0 0 10px"><button class="btn sm ${view === "astar" ? "main" : ""}" data-view="astar">A* search</button><button class="btn sm ${view === "bfs" ? "main" : ""}" data-view="bfs">BFS</button></div>
+      <div><canvas id="map" aria-label="Hospital map with route"></canvas></div>
+      <div style="margin-top:10px"><div class="bar"><span>BFS explored</span><div class="track"><div class="fill b" style="width:${r.bfs.order.length / r.bfs.order.length * 100}%">${r.bfs.order.length} cells</div></div></div>
+      <div class="bar"><span>A* explored</span><div class="track"><div class="fill w" style="width:${r.ast.order.length / r.bfs.order.length * 100}%">${r.ast.order.length} cells</div></div></div></div>
+      <p class="hint">Both find the shortest route (${r.bfs.path.length - 1} steps). Blue tint shows the cells each search explored; A* uses the Manhattan distance to explore fewer.</p></div>
+    <div class="card"><h2>Care plan (classical planning)</h2><ol class="plan">${r.plan.map(s => `<li>${esc(s.t)}</li>`).join("")}</ol>
+      <p class="hint">Found by breadth-first search over states, using actions with preconditions and effects. Suggested for clinical review.</p>
+      <h2 style="margin-top:16px">Related information (retrieval)</h2>
+      ${r.ir.length ? r.ir.map(([i, s]) => `<div class="ir">${esc(DOCS[i])}<div class="hint">Relevance score ${s.toFixed(2)}</div></div>`).join("") : "<p>No related information found.</p>"}</div>
+  </div>`;
+  mapCanvas();
+}
+function renderPlanner() {
+  const docs = +($("doc") ? $("doc").value : 6), cap = +($("cap") ? $("cap").value : 5);
+  const AL = [["Emergency-heavy", [.5, .3, .2]], ["Balanced", [1 / 3, 1 / 3, 1 / 3]], ["Ward-heavy", [.2, .5, .3]]];
+  const SC = [["Accident surge", [36, 10, 8]], ["Flu season", [10, 34, 8]], ["Critical cases", [10, 12, 24]]];
+  const pay = (a, s) => a.reduce((t, f, k) => t + Math.min(docs * f * cap, s[k]), 0);
+  const rows = AL.map(([n, a]) => { const v = SC.map(([, s]) => pay(a, s)); return {n, v, min: Math.min(...v)}; });
+  const best = rows.reduce((m, r) => r.min > m.min ? r : m, rows[0]);
+  $("plan").innerHTML = `<div class="card"><h2>Allocate doctors against the worst case</h2>
+    <p style="margin-top:0">The hospital (MAX) picks how to split its doctors across Emergency, Wards and ICU. Then the situation (MIN) picks the scenario that hurts most. Minimax chooses the split whose worst case is best.</p>
+    <label class="row" for="doc">Doctors on duty: <b id="docO">${docs}</b></label><input type="range" id="doc" min="3" max="12" value="${docs}">
+    <label for="cap">Patients one doctor can treat per hour: <b id="capO">${cap}</b></label><input type="range" id="cap" min="2" max="10" value="${cap}">
+    <div class="tw" style="margin-top:12px"><table><thead><tr><th>Allocation (Emergency / Wards / ICU)</th>${SC.map(s => `<th>${s[0]}</th>`).join("")}<th>Worst case</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="${r === best ? "hl" : ""}"><td>${r.n}</td>${r.v.map(v => `<td>${v.toFixed(1)}</td>`).join("")}<td>${r.min.toFixed(1)}</td></tr>`).join("")}</tbody></table></div>
+    <p class="hint">Numbers are patients treated per hour. Demand per scenario (Emergency / Wards / ICU): ${SC.map(s => s[0] + " " + s[1].join("/")).join("; ")}.</p>
+    <p style="font-weight:700;margin-bottom:0">Minimax chooses <u>${best.n}</u>: even in its worst case it treats ${best.min.toFixed(1)} patients per hour.</p></div>`;
+  $("doc").oninput = renderPlanner; $("cap").oninput = renderPlanner;
+}
+function topStats() {
+  const R = hist.map(a => analyze(a)), n = R.length, cnt = {};
+  R.forEach(r => cnt[r.target] = (cnt[r.target] || 0) + 1);
+  const common = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+  return {n, urgent: R.filter(r => r.urgent).length, common: common ? COND[common[0]].n : "-", bfs: n ? R.reduce((t, r) => t + r.bfs.order.length, 0) / n : 0, ast: n ? R.reduce((t, r) => t + r.ast.order.length, 0) / n : 0};
+}
+function renderDash() {
+  const s = topStats(), cover = [["1","Intelligent agents","The assistant senses symptoms, reasons and acts","Results: summary"],["2","BFS and A* search","Shortest route to a hospital department","Results: route"],
+    ["3","Minimax","Doctor allocation against the worst case","Resource Planner"],["4","Forward and backward chaining","Rules infer conditions from symptoms","Results: chaining"],
+    ["5","Bayes' rule","Probability of each condition","Results: probabilities"],["6","Classical planning","Sequence of care steps","Results: care plan"],["7","Information retrieval","Finds relevant health and hospital information","Results: information"]];
+  $("dash").innerHTML = `<div class="card"><h2>Overview</h2><div class="tiles"><div><b>${s.n}</b><span>Assessments</span></div><div><b>${s.urgent}</b><span>Urgent cases</span></div>
+    <div><b style="font-size:20px">${esc(s.common)}</b><span>Most common result</span></div></div>
+    ${s.n ? `<h2 style="margin-top:18px">Average cells explored on the route</h2><div class="bar"><span>BFS</span><div class="track"><div class="fill b" style="width:100%">${s.bfs.toFixed(1)}</div></div></div>
+    <div class="bar"><span>A*</span><div class="track"><div class="fill w" style="width:${s.ast / s.bfs * 100}%">${s.ast.toFixed(1)}</div></div></div>` : `<p class="hint">Run an assessment to see your statistics here.</p><div class="btns"><button class="btn main" data-go="assess">New Assessment</button></div>`}</div>`;
+}
+function renderHist() {
+  const L = [...hist].reverse(); $("hbtn").hidden = !L.length;
+  $("hist").innerHTML = L.length ? L.map(a => { const r = analyze(a); return `<div class="item"><div><b>${a.sym.map(x => esc(lab(x))).join(", ")}</b><div class="hint" style="margin:0">${when(a.t)}</div></div>
+    <div><span class="badge ${r.urgent ? "urg" : "nor"}">${r.urgent ? "Urgent" : "Routine"}</span> ${esc(COND[r.target].n)} \u2192 ${DEPT[r.dept]}</div>
+    <div class="btns" style="margin:0"><button class="btn sm main" data-open="${a.id}">Open</button><button class="btn sm" data-del="${a.id}">Delete</button></div></div>`; }).join("")
+    : `<p>No assessments yet.</p><div class="btns"><button class="btn main" data-go="assess">New Assessment</button></div>`;
+}
+$("clrAll").onclick = () => { if (confirm("Delete all history?")) { hist = []; sel = null; save(); renderHist(); } };
+
+/* ===== routing ===== */
+function closeMenu() { $("side").classList.remove("open"); $("scrim").hidden = true; $("menu").setAttribute("aria-expanded", "false"); }
+function go(p) {
+  if (!PAGES.includes(p)) p = "dashboard";
+  PAGES.forEach(x => { $("v-" + x).hidden = x !== p; });
+  document.querySelectorAll(".side nav button").forEach(b => { const on = b.dataset.p === p; b.classList.toggle("on", on); b.setAttribute("aria-current", on ? "page" : "false"); });
+  $("ttl").textContent = TITLES[p][0]; $("sub").textContent = TITLES[p][1]; closeMenu();
+  ({dashboard: renderDash, results: renderResults, planner: renderPlanner, history: renderHist, assess: drawChips})[p]();
+  try { if (location.hash.slice(1) !== p) location.hash = p; } catch (e) {}
+  window.scrollTo(0, 0);
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return; const d = t.dataset;
+  if (d.p) go(d.p); else if (d.go) go(d.go);
+  else if (d.sym) { picked.has(d.sym) ? picked.delete(d.sym) : picked.add(d.sym); drawChips(); }
+  else if (d.open) { sel = +d.open; bgoal = null; go("results"); }
+  else if (d.del) { hist = hist.filter(a => a.id !== +d.del); if (sel === +d.del) sel = null; save(); renderHist(); }
+  else if (d.view) { view = d.view; renderResults(); }
+});
+document.addEventListener("change", e => { if (e.target.id === "bg") { bgoal = e.target.value; renderResults(); } });
+$("menu").onclick = () => { const o = $("side").classList.toggle("open"); $("scrim").hidden = !o; $("menu").setAttribute("aria-expanded", o); };
+$("scrim").onclick = closeMenu;
+window.addEventListener("hashchange", () => go(location.hash.slice(1)));
+window.addEventListener("resize", () => { if (!$("v-results").hidden) mapCanvas(); });
+sel = hist.length ? hist[hist.length - 1].id : null;
+go(location.hash.slice(1));
+</script>
+</body>
+</html>
