@@ -1,96 +1,663 @@
 <html lang="en"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f5f7ff">
-  <title>CloudVault | Storage Management System</title>
+  <title>CloudTier — Storage Management System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#"><span class="brand-mark">☁</span><span>Cloud<span class="brand-accent">Vault</span></span></a>
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-mark">☁</span><span>Cloud<span class="brand-accent">Tier</span></span></a>
       <div class="workspace-label">WORKSPACE</div>
       <nav>
-        <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
-        <a class="nav-link" href="#workflow"><span>⇄</span> Classification workflow</a>
-        <a class="nav-link" href="#tiers"><span>▤</span> Storage tiers</a>
-        <a class="nav-link" href="#metadata"><span>▧</span> Metadata &amp; monitoring</a>
+        <a class="nav-item active" href="#overview"><span>▦</span> Overview</a>
+        <a class="nav-item" href="#files"><span>▤</span> My files</a>
+        <a class="nav-item" href="#classification"><span>⌘</span> Classification</a>
+        <a class="nav-item" href="#analytics"><span>◷</span> Cost analytics</a>
       </nav>
       <div class="sidebar-bottom">
-        <div class="storage-mini">
-          <div class="mini-title"><span>Storage used</span><b>68%</b></div>
-          <div class="progress"><span style="width:68%"></span></div>
-          <small>6.8 TB of 10 TB</small>
-        </div>
-        <div class="profile"><div class="avatar">JD</div><div><b>Project Admin</b><small>Administrator</small></div><span class="dots">•••</span></div>
+        <div class="help-card"><div class="help-icon">✦</div><b>Smart storage tip</b><p>Move rarely used files to a colder tier to reduce monthly storage costs.</p><a href="#classification">Explore tiers →</a></div>
+        <div class="profile"><div class="avatar">JD</div><div><b>Project Demo</b><small>Student workspace</small></div><span class="dots">•••</span></div>
       </div>
     </aside>
 
-    <main class="main">
+    <main class="main-content">
       <header class="topbar">
-        <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">☰</button>
-        <div><div class="eyebrow">CLOUD INFRASTRUCTURE / PROJECT</div><h1>Storage management</h1></div>
-        <div class="top-actions"><span class="status"><i></i> All systems operational</span><button class="icon-btn" title="Notifications">♧</button><div class="avatar small">JD</div></div>
+        <div><div class="eyebrow">CLOUD STORAGE / DASHBOARD</div><h1>Storage overview</h1><p class="subheading">Classify your files, understand storage costs, and make smarter tier decisions.</p></div>
+        <div class="top-actions"><span class="status"><i></i> Demo mode</span><button class="btn btn-outline" id="exportBtn">↓ Export report</button><button class="btn btn-primary" id="topUploadBtn">＋ Upload files</button></div>
       </header>
 
-      <section class="hero" id="overview">
-        <div class="hero-copy"><span class="pill">SMART TIER OPTIMIZATION</span><h2>Store smarter.<br><em>Scale effortlessly.</em></h2><p>A cloud storage system that classifies files by access patterns and automatically places them in the most cost-effective storage tier.</p><a class="primary-btn" href="#workflow">Explore workflow <span>→</span></a></div>
-        <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="cloud-icon">☁</div><div class="float-card card-a">↗ <b>+24%</b><small>Efficiency</small></div><div class="float-card card-b">▤ <b>6.8 TB</b><small>Managed storage</small></div><div class="float-dot"></div></div>
+      <section class="stats-grid" id="overview">
+        <article class="stat-card"><div class="stat-top"><span>Total files</span><span class="stat-icon purple">▤</span></div><strong id="totalFiles">0</strong><small>Files added to this workspace</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Total storage</span><span class="stat-icon blue">◫</span></div><strong id="totalStorage">0 B</strong><small>Combined file size</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Estimated monthly cost</span><span class="stat-icon green">$</span></div><strong id="totalCost">$0.00</strong><small>Based on selected storage tiers</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Potential savings</span><span class="stat-icon orange">↘</span></div><strong id="savings">$0.00</strong><small>Compared with storing everything in Hot</small></article>
       </section>
 
-      <section class="section-heading"><div><span class="eyebrow">AT A GLANCE</span><h2>System overview</h2></div><span class="updated">● Live overview · Demo data</span></section>
-      <section class="stats-grid">
-        <article class="stat-card"><div class="stat-top"><span>Total files</span><span class="stat-icon purple">▧</span></div><strong>24,860</strong><small class="positive">↑ 12.8% <span>this month</span></small></article>
-        <article class="stat-card"><div class="stat-top"><span>Storage consumed</span><span class="stat-icon blue">▤</span></div><strong>6.8 <small>TB</small></strong><small class="muted">68% of allocated capacity</small></article>
-        <article class="stat-card"><div class="stat-top"><span>Monthly cost saved</span><span class="stat-icon green">↘</span></div><strong>$2,450</strong><small class="positive">↑ 18.4% <span>vs. last month</span></small></article>
-        <article class="stat-card"><div class="stat-top"><span>Classification rate</span><span class="stat-icon orange">◎</span></div><strong>98.6<small>%</small></strong><small class="muted">Automated file placement</small></article>
-      </section>
-
-      <section class="section-heading" id="workflow"><div><span class="eyebrow">HOW IT WORKS</span><h2>System architecture &amp; workflow</h2><p class="section-sub">Nine connected stages take a file from upload to optimized storage and reporting.</p></div></section>
-      <section class="architecture">
-        <div class="arch-row">
-          <article class="arch-card c-blue"><span class="step">01</span><div class="arch-icon">▣</div><h3>User access layer</h3><small>Frontend</small><p>Register and log in, upload or download files, view usage, and manage permissions.</p><div class="tech">Web / Mobile UI · HTML, CSS, JS, React</div></article>
-          <div class="connector">→</div>
-          <article class="arch-card c-green"><span class="step">02</span><div class="arch-icon">⬡</div><h3>Authentication &amp; access</h3><small>Security layer</small><p>Verify identity, manage roles and permissions, and generate secure tokens.</p><div class="tech">Identity provider · OAuth / JWT</div></article>
-          <div class="connector">→</div>
-          <article class="arch-card c-purple"><span class="step">03</span><div class="arch-icon">☁</div><h3>Application layer</h3><small>Business logic</small><p>Handle metadata, manage requests, coordinate classification, and log activity.</p><div class="tech">Python / Java / Node.js</div></article>
-          <div class="connector">→</div>
-          <article class="arch-card c-orange"><span class="step">04</span><div class="arch-icon">⌕</div><h3>Classification engine</h3><small>Decision engine</small><p>Analyze file type, size and access patterns; classify Hot, Warm or Cold.</p><div class="tech">Rules / ML · Python</div></article>
-          <div class="connector">→</div>
-          <article class="arch-card c-blue"><span class="step">05</span><div class="arch-icon">▤</div><h3>Storage tiers</h3><small>Cloud services</small><p>Store files in the right tier, migrate data, and maintain durability and lifecycle policies.</p><div class="tech">AWS S3 · Azure Blob · GCP</div></article>
-        </div>
-        <div class="down-arrow">↓</div>
-        <div class="workflow-label"><span class="step">06</span><div><b>Data classification flow</b><small>From file upload to user confirmation</small></div></div>
-        <div class="flow-grid">
-          <article class="flow-card flow-red"><b>A. File upload</b><div class="flow-icon">⇧</div><p>User uploads a file. Metadata such as type, size and creation date is extracted.</p></article><div class="flow-arrow">→</div>
-          <article class="flow-card flow-blue"><b>B. Feature analysis</b><div class="flow-icon">⌕</div><p>Check access frequency, file type and size, data sensitivity and user preferences.</p></article><div class="flow-arrow">→</div>
-          <article class="flow-card flow-purple"><b>C. Classification decision</b><div class="flow-icon">⑂</div><p>Compare with rules or an ML model, assign a tier and set retention policy.</p></article><div class="flow-arrow">→</div>
-          <article class="flow-card flow-green"><b>D. Store file</b><div class="flow-icon">☁</div><p>Upload to the selected tier, save metadata and update usage statistics.</p></article><div class="flow-arrow">→</div>
-          <article class="flow-card flow-teal"><b>E. Confirmation</b><div class="flow-icon">✓</div><p>Notify the user, show the storage location and update the dashboard.</p></article>
-        </div>
-      </section>
-
-      <section class="lower-grid" id="tiers">
-        <div class="panel tiers-panel"><div class="panel-heading"><div><span class="eyebrow">AUTOMATIC PLACEMENT</span><h2>Storage tiers</h2></div><span class="tiny-tag">3 classes</span></div>
-          <div class="tier-grid">
-            <article class="tier hot"><div class="tier-symbol">♨</div><h3>Hot storage</h3><p>Frequently accessed data</p><ul><li>Low latency</li><li>Higher cost</li><li>Fast retrieval</li></ul><div class="example">AWS S3 Standard</div></article>
-            <article class="tier warm"><div class="tier-symbol">▤</div><h3>Warm storage</h3><p>Occasionally accessed data</p><ul><li>Balanced cost &amp; speed</li><li>Medium latency</li><li>Moderate retrieval</li></ul><div class="example">AWS S3 Standard-IA</div></article>
-            <article class="tier cold"><div class="tier-symbol">▣</div><h3>Cold storage</h3><p>Rarely accessed data</p><ul><li>Lowest cost</li><li>Higher latency</li><li>Long-term archive</li></ul><div class="example">AWS S3 Glacier</div></article>
+      <section class="content-grid">
+        <article class="panel upload-panel" id="files">
+          <div class="panel-heading"><div><span class="section-kicker">ADD YOUR DATA</span><h2>Upload files</h2><p>Choose files and let the classifier recommend a storage tier.</p></div><span class="step-badge">01</span></div>
+          <label class="dropzone" id="dropzone" for="fileInput">
+            <input id="fileInput" type="file" multiple="">
+            <div class="upload-symbol">↑</div><b>Drop files here or <span>browse</span></b><p>Upload any file type · Multiple files supported</p><small>Your files are read locally in this browser demo. They are not sent to a cloud provider.</small>
+          </label>
+          <div class="upload-options">
+            <div class="field"><label for="accessPattern">Expected access pattern</label><select id="accessPattern"><option value="auto">Auto-detect from file details</option><option value="frequent">Frequently accessed</option><option value="occasional">Occasionally accessed</option><option value="rare">Rarely accessed</option></select></div>
+            <div class="field"><label for="lastAccess">Days since last access</label><input id="lastAccess" type="number" min="0" value="7"></div>
           </div>
-        </div>
-        <div class="panel metadata-panel" id="metadata"><div class="panel-heading"><div><span class="eyebrow">SYSTEM VISIBILITY</span><h2>Metadata &amp; monitoring</h2></div><span class="stat-icon blue">▧</span></div>
-          <div class="database-visual">▤ <span>⌁</span></div><p class="meta-intro">A central database stores file metadata and tracks storage activity.</p>
-          <ul class="check-list"><li>Store file metadata</li><li>Track access patterns</li><li>Monitor storage usage</li><li>Generate reports and analytics</li></ul><div class="tech wide">MySQL / PostgreSQL</div>
-        </div>
+          <div class="upload-foot"><span>Supported: documents, images, videos, archives and more</span><button class="btn btn-primary" id="chooseBtn">Choose files</button></div>
+        </article>
+
+        <article class="panel tier-panel" id="classification">
+          <div class="panel-heading"><div><span class="section-kicker">INTELLIGENT PLACEMENT</span><h2>Storage classification</h2><p>Three tiers balance access speed and storage price.</p></div><span class="step-badge">02</span></div>
+          <div class="tier-list">
+            <div class="tier-row"><div class="tier-symbol hot">🔥</div><div class="tier-info"><b>Hot storage</b><small>Frequently accessed · Low latency</small></div><div class="tier-price">$0.023<small>/ GB / month</small></div></div>
+            <div class="tier-row"><div class="tier-symbol warm">◉</div><div class="tier-info"><b>Warm storage</b><small>Occasional access · Balanced cost</small></div><div class="tier-price">$0.0125<small>/ GB / month</small></div></div>
+            <div class="tier-row"><div class="tier-symbol cold">❄</div><div class="tier-info"><b>Cold storage</b><small>Rare access · Lowest storage cost</small></div><div class="tier-price">$0.004<small>/ GB / month</small></div></div>
+          </div>
+          <div class="logic-note"><span>✦</span><div><b>How does it decide?</b><p>Access pattern, last-access age, file type and size are used to recommend Hot, Warm or Cold. You can override any recommendation.</p></div></div>
+        </article>
       </section>
 
-      <section class="benefits" id="benefits"><div class="benefits-head"><div><span class="eyebrow">THE RESULT</span><h2>Better storage. Better outcomes.</h2></div><span class="benefit-icon">✦</span></div><div class="benefit-grid"><div><b>01</b><h3>Optimized cost</h3><p>Move infrequently accessed files to lower-cost tiers.</p></div><div><b>02</b><h3>Faster access</h3><p>Keep important and frequently used files readily available.</p></div><div><b>03</b><h3>Reliable &amp; secure</h3><p>Support access control, durability and compliance policies.</p></div><div><b>04</b><h3>Useful insights</h3><p>Use real-time analytics to understand storage behavior.</p></div></div></section>
-      <footer>CloudVault <span>·</span> Cloud Storage Management System <span class="footer-right">Architecture concept · Demo dashboard</span></footer>
+      <section class="panel files-panel">
+        <div class="panel-heading files-heading"><div><span class="section-kicker">YOUR OBJECT INVENTORY</span><h2>File classification results</h2><p>Review each file, its recommended tier and estimated monthly storage cost.</p></div><div class="filter-wrap"><input id="searchInput" class="search-input" placeholder="⌕  Search files..."><select id="tierFilter"><option value="all">All tiers</option><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div></div>
+        <div class="table-wrap"><table><thead><tr><th>FILE NAME</th><th>SIZE</th><th>FILE TYPE</th><th>ACCESS PATTERN</th><th>RECOMMENDED TIER</th><th>MONTHLY COST</th><th></th></tr></thead><tbody id="fileTable"><tr class="empty-row"><td colspan="7"><div class="empty-icon">▤</div><b>No files yet</b><span>Upload files above to see classification results.</span></td></tr></tbody></table></div>
+        <div class="table-footer"><span id="showingCount">Showing 0 files</span><button class="text-btn" id="clearBtn">Clear all files</button></div>
+      </section>
+
+      <section class="analytics-grid" id="analytics">
+        <article class="panel chart-panel"><div class="panel-heading"><div><span class="section-kicker">STORAGE DISTRIBUTION</span><h2>Files by tier</h2></div><span class="mini-label">Live overview</span></div><div class="distribution" id="distribution"><div class="donut"><div><b id="donutTotal">0</b><small>files</small></div></div><div class="legend"><div><i class="dot hot-dot"></i><span>Hot</span><b id="hotCount">0</b></div><div><i class="dot warm-dot"></i><span>Warm</span><b id="warmCount">0</b></div><div><i class="dot cold-dot"></i><span>Cold</span><b id="coldCount">0</b></div></div></div></article>
+        <article class="panel cost-panel"><div class="panel-heading"><div><span class="section-kicker">COST ESTIMATOR</span><h2>Monthly storage estimate</h2><p>Illustrative S3-style storage rates in USD.</p></div></div><div class="cost-breakdown"><div><span><i class="dot hot-dot"></i>Hot storage</span><b id="hotCost">$0.00</b></div><div><span><i class="dot warm-dot"></i>Warm storage</span><b id="warmCost">$0.00</b></div><div><span><i class="dot cold-dot"></i>Cold storage</span><b id="coldCost">$0.00</b></div></div><div class="total-line"><span>Total estimated / month</span><strong id="breakdownTotal">$0.00</strong></div><p class="disclaimer">Estimate covers storage capacity only. Retrieval, requests, transfer, taxes, minimum storage duration and provider-specific charges are not included.</p></article>
+      </section>
+      <footer>CloudTier · Academic project prototype <span>Classification is a recommendation, not an actual cloud migration.</span></footer>
     </main>
   </div>
+  <div class="toast" id="toast"></div>
   <script src="script.js"></script>
 
-</body></html>
+</body><div id="aiFabShadowRoot" data-fab-type="react" style="opacity: 1;"><template shadowrootmode="open"><div id="fab-react-root"><div class="fab-root"><div class="acrobat-button-container " style="bottom: auto; top: 641.679px;"><div class="acrobat-button " role="button" aria-label="Get summaries and key insights using AI Assistant"><button class="close-btn  "><svg class="close-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_8552_7892" maskUnits="userSpaceOnUse" x="0" y="0" width="14" height="14" style="mask-type: alpha;"><path d="M7.82482 7.00034L10.6374 4.18778C10.7893 4.03592 10.7893 3.78969 10.6374 3.63783L10.3625 3.36292C10.2106 3.21106 9.96446 3.21106 9.81255 3.36292L6.99995 6.17548L4.18734 3.36292C4.03543 3.21106 3.78933 3.21106 3.63743 3.36292L3.36247 3.63783C3.21056 3.78969 3.21056 4.03592 3.36247 4.18778L6.17507 7.00034L3.36247 9.81295C3.21056 9.96481 3.21056 10.2111 3.36247 10.3629L3.63743 10.6378C3.78933 10.7897 4.03543 10.7897 4.18734 10.6378L6.99995 7.82526L9.81255 10.6378C9.96446 10.7897 10.2106 10.7897 10.3625 10.6378L10.6374 10.3629C10.7893 10.2111 10.7893 9.96481 10.6374 9.81295L7.82482 7.00034Z" fill="#222222"></path></mask><g mask="url(#mask0_8552_7892)"><rect width="14" height="14"></rect></g></svg><svg class="burger-icon" width="21" height="17" viewBox="0 0 21 17" fill="none" xmlns="http://www.w3.org/2000/svg"><mask id="mask0_12188_28876" maskUnits="userSpaceOnUse" x="3" y="3" width="15" height="14" style="mask-type: alpha;"><path d="M15.1285 12.8008H6.37852C6.08867 12.8008 5.85352 13.0359 5.85352 13.3258C5.85352 13.6156 6.08867 13.8508 6.37852 13.8508H15.1285C15.4184 13.8508 15.6535 13.6156 15.6535 13.3258C15.6535 13.0359 15.4184 12.8008 15.1285 12.8008Z" fill="#292929"></path><path d="M6.37852 6.85078H15.1285C15.4184 6.85078 15.6535 6.61562 15.6535 6.32578C15.6535 6.03594 15.4184 5.80078 15.1285 5.80078H6.37852C6.08867 5.80078 5.85352 6.03594 5.85352 6.32578C5.85352 6.61562 6.08867 6.85078 6.37852 6.85078Z" fill="#292929"></path><path d="M15.1285 9.30078H6.37852C6.08867 9.30078 5.85352 9.53594 5.85352 9.82578C5.85352 10.1156 6.08867 10.3508 6.37852 10.3508H15.1285C15.4184 10.3508 15.6535 10.1156 15.6535 9.82578C15.6535 9.53594 15.4184 9.30078 15.1285 9.30078Z" fill="#292929"></path></mask><g mask="url(#mask0_12188_28876)"><rect x="3.75391" y="3" width="14" height="14" fill="#464646"></rect></g></svg></button><div class="icon-container" role="button" tabindex="0" aria-label="Open AI Assistant"><svg id="ImportedIcons" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" class="fab-svg-icon"><path d="m6.21661,16.39534c-1.35034,2.23499-2.67933,3.64758-3.45616,3.64758-.12795.00539-.25276-.04056-.34667-.12762-.14818-.12483-.21629-.32065-.17758-.5105.14764-.80079,1.68628-1.95576,3.98041-3.00946Zm6.49075-3.19656c-.57993.12528-1.1792.27056-1.78689.43544-.4366.11893-.87951.24862-1.32255.38729.23541-.4949.4515-.98554.6398-1.452.24831-.6159.48156-1.232.69564-1.83456.18831.30354.38304.59839.58195.88207.39375.56092.81787,1.09736,1.19205,1.58176Zm-2.99822-10.63684c.08814-.18001.26644-.29855.46653-.31016.51149,0,.62276.63358.62276,1.1638-.06787,1.25011-.29293,2.48669-.66988,3.68055-.85816-2.33642-.73831-3.97319-.41942-4.53419h.00001Zm9.60883,12.20974c-.13359.4402-.56725.71808-1.023.6555-.15594-.00061-.3112-.02054-.46224-.05933-1.07834-.28263-2.07953-.80363-2.92976-1.5246.71719-.11267,1.44198-.17001,2.16797-.17149.48402-.00813.96771.03017,1.44442.11438.43447.09244.92449.33873.80261.98554Zm1.45515-1.0537c-1.01837-.83309-2.33117-1.21735-3.63802-1.06487-.98482.00983-1.96732.09739-2.93836.26187-.62354-.62512-1.19003-1.30467-1.69272-2.03054-.38314-.54455-.73672-1.10931-1.05923-1.69182.54287-1.57384.85986-3.2167.94151-4.87953,0-1.49369-.57564-3.09087-2.19132-3.09087-.56296.01952-1.07528.33036-1.35261.82066-.68906,1.2165-.41298,3.72002.68705,6.26756-.38306,1.17041-.80046,2.31007-1.31196,3.57265-.43687,1.08123-.93191,2.13803-1.48293,3.16579-1.64775.68213-5.15115,2.33642-5.48494,4.16456-.10306.53569.0783,1.08658.47942,1.45629.39145.35044.90217.53779,1.42737.5236,2.10998,0,4.21366-3.003,5.63044-5.58789.80461-.2816,1.62641-.53671,2.44391-.759.8967-.24407,1.76345-.44427,2.58082-.594,1.39014,1.39224,3.25004,2.21523,5.21531,2.30773,1.36751,0,1.87887-.60942,2.06516-1.122.20733-.5893.08589-1.24438-.3189-1.72019Z" fill="var(--iconRed, #d31510)" fill-rule="evenodd"></path></svg></div></div><div class="tooltip-text fab-home-tooltip "><svg class="fab-home-tooltip-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 22 22" aria-hidden="true" focusable="false"><path d="m6.21661,16.39534c-1.35034,2.23499-2.67933,3.64758-3.45616,3.64758-.12795.00539-.25276-.04056-.34667-.12762-.14818-.12483-.21629-.32065-.17758-.5105.14764-.80079,1.68628-1.95576,3.98041-3.00946Zm6.49075-3.19656c-.57993.12528-1.1792.27056-1.78689.43544-.4366.11893-.87951.24862-1.32255.38729.23541-.4949.4515-.98554.6398-1.452.24831-.6159.48156-1.232.69564-1.83456.18831.30354.38304.59839.58195.88207.39375.56092.81787,1.09736,1.19205,1.58176Zm-2.99822-10.63684c.08814-.18001.26644-.29855.46653-.31016.51149,0,.62276.63358.62276,1.1638-.06787,1.25011-.29293,2.48669-.66988,3.68055-.85816-2.33642-.73831-3.97319-.41942-4.53419h.00001Zm9.60883,12.20974c-.13359.4402-.56725.71808-1.023.6555-.15594-.00061-.3112-.02054-.46224-.05933-1.07834-.28263-2.07953-.80363-2.92976-1.5246.71719-.11267,1.44198-.17001,2.16797-.17149.48402-.00813.96771.03017,1.44442.11438.43447.09244.92449.33873.80261.98554Zm1.45515-1.0537c-1.01837-.83309-2.33117-1.21735-3.63802-1.06487-.98482.00983-1.96732.09739-2.93836.26187-.62354-.62512-1.19003-1.30467-1.69272-2.03054-.38314-.54455-.73672-1.10931-1.05923-1.69182.54287-1.57384.85986-3.2167.94151-4.87953,0-1.49369-.57564-3.09087-2.19132-3.09087-.56296.01952-1.07528.33036-1.35261.82066-.68906,1.2165-.41298,3.72002.68705,6.26756-.38306,1.17041-.80046,2.31007-1.31196,3.57265-.43687,1.08123-.93191,2.13803-1.48293,3.16579-1.64775.68213-5.15115,2.33642-5.48494,4.16456-.10306.53569.0783,1.08658.47942,1.45629.39145.35044.90217.53779,1.42737.5236,2.10998,0,4.21366-3.003,5.63044-5.58789.80461-.2816,1.62641-.53671,2.44391-.759.8967-.24407,1.76345-.44427,2.58082-.594,1.39014,1.39224,3.25004,2.21523,5.21531,2.30773,1.36751,0,1.87887-.60942,2.06516-1.122.20733-.5893.08589-1.24438-.3189-1.72019Z" fill="#D6373F" fill-rule="evenodd"></path></svg><span class="tooltip-text-content">Check out Acrobat's new home in your browser</span></div><div class="draggable-handle "><svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.60039 13.0699C5.26313 13.0699 5.80039 12.5327 5.80039 11.8699C5.80039 11.2072 5.26313 10.6699 4.60039 10.6699C3.93765 10.6699 3.40039 11.2072 3.40039 11.8699C3.40039 12.5327 3.93765 13.0699 4.60039 13.0699Z" fill="#292929"></path><path d="M4.60039 8.27109C5.26313 8.27109 5.80039 7.73384 5.80039 7.07109C5.80039 6.40835 5.26313 5.87109 4.60039 5.87109C3.93765 5.87109 3.40039 6.40835 3.40039 7.07109C3.40039 7.73384 3.93765 8.27109 4.60039 8.27109Z" fill="#292929"></path><path d="M4.60039 3.47031C5.26313 3.47031 5.80039 2.93305 5.80039 2.27031C5.80039 1.60757 5.26313 1.07031 4.60039 1.07031C3.93765 1.07031 3.40039 1.60757 3.40039 2.27031C3.40039 2.93305 3.93765 3.47031 4.60039 3.47031Z" fill="#292929"></path><path d="M9.4002 13.0699C10.0629 13.0699 10.6002 12.5327 10.6002 11.8699C10.6002 11.2072 10.0629 10.6699 9.4002 10.6699C8.73745 10.6699 8.2002 11.2072 8.2002 11.8699C8.2002 12.5327 8.73745 13.0699 9.4002 13.0699Z" fill="#292929"></path><path d="M9.4002 8.27109C10.0629 8.27109 10.6002 7.73384 10.6002 7.07109C10.6002 6.40835 10.0629 5.87109 9.4002 5.87109C8.73745 5.87109 8.2002 6.40835 8.2002 7.07109C8.2002 7.73384 8.73745 8.27109 9.4002 8.27109Z" fill="#292929"></path><path d="M9.4002 3.47031C10.0629 3.47031 10.6002 2.93305 10.6002 2.27031C10.6002 1.60757 10.0629 1.07031 9.4002 1.07031C8.73745 1.07031 8.2002 1.60757 8.2002 2.27031C8.2002 2.93305 8.73745 3.47031 9.4002 3.47031Z" fill="#292929"></path></svg></div></div></div></div><style>
+    .acrobat-button-container {
+        position: fixed;
+        right: 0;
+        bottom: 36px;
+        z-index: 2147483646;
+        visibility: visible !important;
+        pointer-events: all;
+        opacity: 1;
+        display: flex;
+        align-items: center;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    @media print {
+        .acrobat-button-container {
+            display: none !important;
+        }
+    }
+
+    .acrobat-button {
+        position: relative;
+        background: white;
+        display: flex;
+        align-items: center;
+        pointer-events: all;
+        touch-action: none;
+        box-shadow: 0px 2px 8px 0px #00000029;
+        height: 34px;
+        width: 34px;
+        border: 1px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: border-box;
+        background-image: linear-gradient(white, white),
+                        linear-gradient(95.85deg, #D73220 0%, #D92361 33%, #7155FA 100%);
+        border-radius: 18px;
+        justify-content: right;
+        margin-right: var(--fab-margin-right, 28px);
+        overflow: hidden;
+    }
+
+    .acrobat-button-container-transparent {
+        opacity: 0.4 !important;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .acrobat-button-container-transparent:hover,
+    .acrobat-button-container-transparent:focus,
+    .acrobat-button-container-transparent:active {
+        opacity: 1;
+    }
+
+    .acrobat-button > svg {
+        flex-shrink: 0;
+        margin: 4px 5px 5px 5px;
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
+        fill: #b40000;
+    }
+    .acrobat-button:has(.close-btn.open),
+    .expand-acrobat-button {
+        width: 64px;
+    }
+
+    .disabled {
+        background: #B1B1B1;
+    }
+
+    .tooltip-text {
+        width: 160px;
+        visibility: hidden;
+        opacity: 0;
+        background-color: #FFFFFF;
+        color: #292929;
+        border-radius: 7px;
+        padding: 4px 1px 5px 9px;
+        position: absolute;
+        z-index: 1;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-right: 10px;
+        transition: opacity 0.3s, visibility 0s linear 2s;
+        font-size: 12px;
+        line-height: 15px;
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        filter: drop-shadow(0px 1px 6px rgba(0, 0, 0, 0.12));
+    }
+
+    .tooltip-text::after {
+       content: '';
+       position: absolute;
+       top: 50%;
+       left: 100%;
+       transform: translateY(-50%);
+       border-width: 6px;
+       border-style: solid;
+       border-color: transparent transparent transparent #fff;
+    }
+
+    .show-tooltip {
+        visibility: visible;
+        opacity: 1;
+        line-height: 1.5;
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        transition: opacity 0.3s;
+        transition-delay: 500ms;
+    }
+
+    .close-btn {
+        position: relative;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-btn svg {
+        fill: #464646;
+    }
+
+    .close-btn.showCloseButton {
+        opacity: 1;
+        display: flex;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 2px;
+    }
+
+    .fab-view-settings-dialog {
+        display: none;
+        position: absolute;
+        bottom: 40px;
+        z-index: 1;
+    }
+
+    .close-btn:hover {
+        background: #E6E6E6;
+        border-radius: 50%; /* Keep original circular hover */
+        cursor: pointer;
+    }
+
+    .fab-view-settings-dialog.showDialog {
+        display: block;
+    }
+    .close-btn .burger-icon {
+        display: inline;
+        margin-bottom: 2px;
+    }
+    .close-btn .close-icon {
+        display: none;
+    }
+    .close-btn.open .burger-icon {
+        display: none;
+    }
+    .close-btn.open .close-icon {
+        display: inline;
+    }
+    .tooltip-text .tooltip-text-content {
+        font-weight: bold;
+    }
+    .tooltip-text .tooltip-sub-text-text {
+        font-style: italic;
+        font-size: 11px;
+    }
+
+    /* Home tooltip FTE — icon + layout overrides */
+    .fab-home-tooltip {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 183px;
+        border-radius: 8px;
+        padding: 6px 8px 8px 12px;
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.08), 0px 1px 2px rgba(0,0,0,0.04), 0px 0px 1px rgba(0,0,0,0.08), 0px 3px 5px rgba(116,23,208,0.07);
+    }
+    .fab-home-tooltip .tooltip-text-content {
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        line-height: 16px;
+        color: #292929;
+        white-space: normal;
+        word-wrap: break-word;
+        width: 145px;
+    }
+    .fab-home-tooltip-icon {
+        flex-shrink: 0;
+        display: block;
+        width: 16px;
+        height: 16px;
+    }
+
+    /* Icon container styles - replaces iframe */
+    .icon-container {
+        width: 33px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+        pointer-events: all;
+        flex-shrink: 0;
+        background: transparent;
+        border: none;
+    }
+
+    .icon-container:active {
+        cursor: grabbing;
+    }
+
+    .fab-svg-icon {
+        width: 22px;
+        height: 22px;
+        padding: 5px 5px 5px 6px;
+        pointer-events: none;
+        fill: #b40000;
+    }
+
+    .draggable-handle {
+        display: none;
+        position: absolute;
+        right: var(--drag-handle-right, 12px);
+        cursor: grab;
+    }
+    .draggable-handle-visible {
+        display: flex;
+    }
+
+    /* Font face declarations - for proper font loading in Shadow DOM */
+    @font-face {
+        font-family: 'adobe-clean';
+        font-weight: 400;
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Regular.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'adobe-clean';
+        font-weight: 700;
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Bold.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'AdobeClean-Regular';
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Regular.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'AdobeClean-Bold';
+        src: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/css/fonts/AdobeClean-Bold.otf') format('opentype');
+    }
+    body {
+        font-family: 'AdobeClean-Regular', adobe-clean, "Adobe Clean", sans-serif;
+    }
+
+    .dialog-container {
+        width: 166px;
+        background-color: #ffffff;
+        border-radius: 4px;
+        border: 1px solid #B1B1B1;
+        box-shadow: 0px 1px 4px 0px #00000026;
+        z-index: 1000;
+        padding: 4px;
+        position: relative;
+        margin: 4px 0px;
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu .menu_item {
+        cursor: pointer;
+        font-family: 'AdobeClean-Regular', adobe-clean, "Adobe Clean", sans-serif;
+        align-content: center;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 18.2px;
+        text-align: left;
+        color: #222222;
+        padding: 0px 12px;
+        height: 32px;
+        width: 140px;
+    }
+
+    .menu .menu_item:hover {
+        background-color: #eaeaea;
+    }
+
+    .preferences {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18.2px;
+        text-align: left;
+        color: #464646;
+    }
+
+    .divider {
+        border-top: 1px solid #E6E6E6;
+    }
+
+    /* React-specific wrappers - minimal */
+    .fab-root {
+        font-family: 'adobe-clean', Adobe Clean, sans-serif;
+        /* FAB is UI chrome, not page content — exclude from host page select-all/copy */
+        -webkit-user-select: none;
+        user-select: none;
+    }
+
+    button.close-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 10; /* Ensure clickable above all other elements */
+        pointer-events: auto;
+    }
+
+    /* FAB Action Pills - From Figma Design */
+    .fab-pills-container {
+        position: absolute;
+        bottom: 42px; /* FAB height (34px) + gap (8px) = 42px */
+        right: var(--fab-margin-right, 28px);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+        width: 142px;
+        z-index: 1;
+    }
+
+    .fab-pills-container.pills-below {
+        bottom: auto;
+        top: 42px; /* Same gap when positioned below */
+    }
+
+    /* Nudge variant (challenger) — all pills take dynamic width instead of fixed 142px */
+    .fab-pills-container.nudge-variant .fab-pill-button {
+        width: auto;
+    }
+
+    .fab-pills-container.nudge-variant .fab-pill-label {
+        white-space: nowrap;
+    }
+
+    /* Extend hover area using ::after pseudo-element - doesn't affect visual layout */
+    .fab-pills-container::after {
+        content: '';
+        position: absolute;
+        top: 100%; /* Start right after the pills content */
+        left: 0;
+        right: 0;
+        height: 8px;
+        background: transparent;
+        pointer-events: auto;
+    }
+
+    .fab-pills-container.pills-below::after {
+        top: auto;
+        bottom: 100%; /* Start right before the pills when positioned below */
+    }
+
+    /* FTE Header - First Time Experience (56px with close button) */
+    .fab-fte-header {
+        position: relative;
+        width: 142px;
+        min-height: 56px;
+        background: #FFFFFF;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+    }
+
+    .fab-fte-background {
+        position: absolute;
+        left: -13px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 183.33px;
+        height: 126.82px;
+        background: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/images/fab-header-background.svg') no-repeat center;
+        background-size: cover;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .fab-fte-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 2;
+        color: #222222;
+        padding: 0;
+    }
+
+    .fab-fte-close:hover {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+    }
+
+    .fab-fte-close svg {
+        width: 8px;
+        height: 8px;
+    }
+
+    .fab-fte-text {
+        position: relative;
+        width: 102px;
+        font-family: 'AdobeClean-Bold', adobe-clean, sans-serif;
+        font-weight: 400; /* Use Bold font file directly, not synthetic bold */
+        font-size: 12px;
+        line-height: 16px;
+        color: #222222; /* Figma spec color */
+        z-index: 1;
+        white-space: normal;
+        word-wrap: break-word;
+        margin-left: 16px;
+        margin-right: auto;
+        box-sizing: border-box;
+        -webkit-font-smoothing: subpixel-antialiased; /* Better font rendering */
+        -moz-osx-font-smoothing: auto;
+    }
+
+    /* Hover Header - Normal state (24px without close button) */
+    .fab-hover-header {
+        position: relative;
+        width: 142px;
+        min-height: 24px;
+        background: #FFFFFF; /* White background to show the colorful SVG and text */
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .fab-hover-background {
+        position: absolute;
+        left: -27px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 212.63px;
+        height: 147.09px;
+        background: url('chrome-extension://efaidnbmnnnibpcajpcglclefindmkaj/browser/images/fab-header-background.svg') no-repeat center;
+        background-size: cover;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .fab-hover-text {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'AdobeClean-Bold', adobe-clean, sans-serif;
+        font-weight: 400; /* Use Bold font file directly, not synthetic bold */
+        font-size: 12px;
+        line-height: 15px;
+        color: #222222; /* Figma spec color */
+        z-index: 1;
+        white-space: normal;
+        padding: 4px 9px;
+        box-sizing: border-box;
+        -webkit-font-smoothing: subpixel-antialiased; /* Better font rendering */
+        -moz-osx-font-smoothing: auto;
+    }
+
+    /* Individual Pill Buttons */
+    .fab-pill-button {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        width: 142px;
+        min-height: 24px; /* Min height, allows growth with content */
+        background: #FFFFFF;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 6px 0px rgba(0, 0, 0, 0.04), 0px 0px 2px 0px rgba(0, 0, 0, 0.12);
+        cursor: pointer;
+        padding: 0;
+        transition: background 0.2s ease;
+        overflow: visible;
+    }
+
+   .fab-pill-contextual-ring-wrapper {
+        position: relative;
+        display: inline-block;
+        padding: 1px;
+        border-radius: 13px;
+        overflow: hidden;
+    }
+
+    .fab-pill-contextual-ring-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 300px;
+        height: 300px;
+        z-index: -1;
+        background: conic-gradient(from 180deg at 50% 50%,
+            #7155FA 0deg,
+            #7155FA 54deg,
+            #D92361 108deg,
+            #D73220 180deg,
+            #FFFFFF 180deg,
+            #FFFFFF 360deg);
+        animation: fab-contextual-pill-ring-rotate 3s linear infinite;
+    }
+
+    @keyframes fab-contextual-pill-ring-rotate {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .fab-pill-button:hover {
+        background: #D5D5D5;
+    }
+
+    .fab-pill-button:hover .fab-pill-label,
+    .fab-pill-button:hover .fab-pill-icon {
+        color: #000000; /* Hover state color from Figma Alias/content/neutral/hover */
+    }
+
+    .fab-pill-button:active {
+        background: #F4F4F4;
+    }
+
+    .fab-pill-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 7px 4px 10px; /* Exact Figma specs: top right bottom left */
+        flex-shrink: 0;
+        box-sizing: border-box;
+    }
+
+    .fab-pill-icon img {
+        width: 16px;
+        height: 16px;
+        display: block;
+        flex-shrink: 0;
+        /* SVG icons with currentColor fill will inherit color from parent */
+        filter: brightness(0) saturate(100%) invert(13%) sepia(0%) saturate(0%) hue-rotate(196deg) brightness(97%) contrast(97%); /* #222222 */
+    }
+
+    .fab-pill-button:hover .fab-pill-icon img {
+        filter: brightness(0) saturate(100%); /* #000000 on hover */
+    }
+
+    .fab-pill-label {
+        display: flex;
+        align-items: center;
+        font-family: 'AdobeClean-Bold', adobe-clean, sans-serif;
+        font-weight: 400; /* Use Bold font file directly, not synthetic bold */
+        font-size: 12px;
+        line-height: 15px; /* 1.252 * 12px = 15.024px */
+        color: #222222; /* Default text color from Figma Alias/content/neutral/default */
+        padding: 4px 9px 5px 0; /* Reduced right padding to prevent wrapping */
+        text-align: left;
+        white-space: normal; /* Allow text wrapping for multi-line content */
+        box-sizing: border-box;
+        flex: 1;
+        overflow: visible;
+        -webkit-font-smoothing: subpixel-antialiased; /* Better font rendering */
+        -moz-osx-font-smoothing: auto;
+    }
+</style></template></div></html>
